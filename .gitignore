@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.Python
+*.joblib.bak
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# ML artifacts (model is committed under backend/models/)
+ml/.cache/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/

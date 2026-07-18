@@ -1,0 +1,72 @@
+{
+  "model_version": "1.0.0",
+  "algorithm": "GradientBoostingClassifier",
+  "features": [
+    "airline",
+    "origin",
+    "dest",
+    "month",
+    "day_of_week",
+    "hour",
+    "distance"
+  ],
+  "categorical_features": [
+    "airline",
+    "origin",
+    "dest"
+  ],
+  "numeric_features": [
+    "month",
+    "day_of_week",
+    "hour",
+    "distance"
+  ],
+  "target": "delayed",
+  "metrics": {
+    "accuracy": 0.6615,
+    "roc_auc": 0.6491,
+    "n_train": 8000,
+    "n_test": 2000,
+    "delay_rate": 0.6332
+  },
+  "airlines": [
+    "6E",
+    "AA",
+    "AI",
+    "AS",
+    "B6",
+    "DL",
+    "F9",
+    "IX",
+    "NK",
+    "QP",
+    "SG",
+    "UA",
+    "UK",
+    "WN"
+  ],
+  "airports": [
+    "AMD",
+    "ATL",
+    "BLR",
+    "BOM",
+    "BOS",
+    "CCU",
+    "COK",
+    "DEL",
+    "DEN",
+    "DFW",
+    "GOI",
+    "HYD",
+    "JFK",
+    "LAS",
+    "LAX",
+    "MAA",
+    "MIA",
+    "ORD",
+    "PHX",
+    "PNQ",
+    "SEA",
+    "SFO"
+  ]
+}

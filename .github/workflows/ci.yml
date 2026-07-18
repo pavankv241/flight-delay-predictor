@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ml/requirements.txt
+          pip install -r backend/requirements.txt
+          pip install httpx
+      - name: Generate data and train model
+        run: |
+          python ml/generate_data.py
+          python ml/train.py
+      - name: Smoke-test API
+        working-directory: backend
+        run: |
+          python - <<'PY'
+          from fastapi.testclient import TestClient
+          from app.main import app
+
+          # Context manager required so FastAPI lifespan loads the model
+          with TestClient(app) as client:
+              h = client.get("/health")
+              assert h.status_code == 200, h.text
+              assert h.json()["model_loaded"] is True, h.json()
+
+              m = client.get("/meta")
+              assert m.status_code == 200, m.text
+
+              p = client.post(
+                  "/predict",
+                  json={
+                      "airline": "6E",
+                      "origin": "BOM",
+                      "dest": "DEL",
+                      "month": 7,
+                      "day_of_week": 4,
+                      "hour": 18,
+                      "distance": 710,
+                  },
+              )
+              assert p.status_code == 200, p.text
+              body = p.json()
+              assert 0.0 <= body["delay_probability"] <= 1.0
+              print("API smoke test OK", body)
+          PY
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install and build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+        env:
+          VITE_API_URL: http://localhost:8000
